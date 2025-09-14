@@ -1,0 +1,267 @@
+---
+title: "Introduction to EvalTest"
+author: "Author: Dr. Nassim Ayad"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to EvalTest}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Table of Contents
+
+-   [Introduction to EvalTest](#introduction-to-evaltest)
+-   [Installation](#installation)
+-   [Launching the Application](#launching-the-application)
+-   [Using the Application](#using-the-application)
+-   [Statistical formulas](#statistical-formulas)
+-   [Citation](#citation)
+-   [References](#references)
+
+## Introduction to EvalTest {#introduction-to-evaltest}
+
+The 'EvalTest' package provides a 'Shiny' application for evaluating diagnostic test performance using data from laboratory or diagnostic research. It supports both binary and continuous test variables. It allows users to compute key performance indicators with their confidence interval and visualize Receiver Operating Characteristic (ROC) curves, determine optimal cut-off thresholds, display confusion matrix, and export publication-ready plot. It aims to facilitate the application of statistical methods in diagnostic test evaluation by healthcare professionals.
+
+## Installation {#installation}
+
+You can install the development version of 'EvalTest' from GitHub like so:
+
+```{r install_github, eval = FALSE}
+devtools::install_github("NassimAyad87/EvalTest", dependencies = TRUE)
+```
+
+Or from CRAN (after the package is published there):
+
+```{r setup, eval = FALSE}
+install.packages("EvalTest", dependencies = TRUE)
+```
+
+## Launching the Application {#launching-the-application}
+
+After installing the package, you can launch the application following these steps:
+
+```{r library_call, eval = FALSE}
+library(EvalTest)
+```
+
+```{r launch, eval = FALSE}
+run_app() 
+```
+
+This will open the 'Shiny' application in your default web or your RStudio viewer.
+
+```{r display_app, eval = TRUE, echo=FALSE, out.width= "80%"}
+knitr::include_graphics("img/screenshot2.png")
+```
+
+## Using the Application {#using-the-application}
+
+The application is designed to be user-friendly and intuitive. Here are the steps to use it:
+
+-   Before uploading your data, you should ensure that the test variable is in one column (either qualitative 1/0 or quantitative) and the reference variable (disease status) is in another column (binary: 1/0), and there are no missing values in the selected columns.
+
+```{r display_data, eval = TRUE, echo=FALSE, out.width= "80%"}
+knitr::include_graphics("img/screenshot1.png")
+```
+
+-   Upload your data in Excel format (.xlsx) by pressing the Browse button in the Data import and parameters setting panel.
+
+-   Choose your variable test type (Qualitative binary 1/0 or Quantitative).
+
+-   Select the appropriate columns for test variable and reference variable (disease status).
+
+-   Input disease prevalence value of the study population (number between 0 and 1).
+
+```{r display_setting, eval = TRUE, echo=FALSE, out.width= "80%"}
+knitr::include_graphics("img/screenshot3.png")
+```
+
+-   Run the analysis and explore the results in the different tabs.
+
+-   You can download the ROC plot and the results tables for your report.
+
+We can see below some screenshots of the different tabs of the application. We have ROC curve with its confidence interval, optimal cut-off point of test variable, AUC value and its confidence interval, and projection of best sensitivity and specificity according to the top-left method. We can also download the plot in PNG format.
+
+```{r display_plot, eval = TRUE, echo=FALSE, out.width= "80%"}
+knitr::include_graphics("img/screenshot4.png")
+```
+
+We have also the confusion matrix where test variable was dichotomized to binary variable (positive/negative test) according the best cut-off point, with the counts of true positives, false positives, true negatives, and false negatives. We can download it in Excel file format.
+
+```{r display_matrix, eval = TRUE, echo=FALSE, out.width= "80%"}
+knitr::include_graphics("img/screenshot5.png")
+```
+
+We have all computed performance indicators with their estimate and confidence intervals built according to Wilson method.
+
+```{r display_indicators, eval = TRUE, echo=FALSE, out.width= "80%"}
+knitr::include_graphics("img/screenshot6.png")
+```
+
+## Statistical formulas {#statistical-formulas}
+
+The main diagnostic performance indicators computed by **EvalTest** are defined as follows:
+
+### Determining the Optimal Cut-off Threshold (Top-left Method)
+
+The **top-left method** is a common approach to select the optimal cut-off threshold from the ROC curve.\
+It identifies the point on the curve that is **closest to the ideal point (0,1)**, which corresponds to perfect sensitivity (100%) and specificity (100%).
+
+The **optimal cut-off threshold** is the value of $t$ that minimizes this distance:
+
+$$
+t^{*} = \arg\min_{t} \; d(t)
+$$
+
+For each threshold $t$, the Euclidean distance to the point (0,1) is calculated as:
+
+$$
+d(t) = \sqrt{(1 - \text{Se}(t))^2 + (1 - \text{Sp}(t))^2}
+$$
+
+where:
+
+-   $\text{Se}(t)$ is the sensitivity at threshold $t$,\
+-   $\text{Sp}(t)$ is the specificity at threshold $t$.
+
+### Estimates
+
+-   **Sensitivity (Se):**
+
+$$
+Se = \frac{TP}{TP + FN}
+$$
+
+-   **Specificity (Sp):**
+
+$$
+Sp = \frac{TN}{TN + FP}
+$$
+
+-   **Positive Predictive Value (PPV):**
+
+$$
+PPV = \frac{Se \times Prev}{(Se \times Prev) + (1 - Sp)(1 - Prev)}
+$$
+
+-   **Negative Predictive Value (NPV):**
+
+$$
+NPV = \frac{Sp \times (1 - Prev)}{(1 - Se) \times Prev + Sp \times (1 - Prev)}
+$$
+
+-   **Likelihood Ratios:**
+
+$$
+LR^+ = \frac{Se}{1 - Sp}, \qquad
+LR^- = \frac{1 - Se}{Sp}
+$$
+
+-   **Accuracy (Acc):**
+
+$$
+Acc = \frac{TP + TN}{TP + FP + FN + TN}
+$$
+
+-   **Youden’s Index (J):**
+
+$$
+J = Se + Sp - 1
+$$
+
+------------------------------------------------------------------------
+
+### Confidence Intervals
+
+-   For **proportions** (Se, Sp, Acc), **Wilson binomial confidence intervals** are used:
+
+Let:
+
+`x` = number of “successes” (e.g. true positives for sensitivity, true negatives for specificity)\
+`n` = number of trials (e.g. TP + FN for sensitivity, TN + FP for specificity)\
+$\hat{p} = x/n$ = observed proportion\
+$z = z_{1-\alpha/2}$ = quantile of the standard normal distribution (1.96 for 95% CI)
+
+The **Wilson adjusted estimate** is
+
+$$
+\hat{p}_W = \frac{\hat{p} + \tfrac{z^2}{2n}}{1 + \tfrac{z^2}{n}}
+$$
+
+The **half-width of the confidence interval** is
+
+$$
+d = \frac{z}{1 + \tfrac{z^2}{n}}
+    \sqrt{\frac{\hat{p}(1 - \hat{p})}{n} + \frac{z^2}{4n^2}}
+$$
+
+Therefore,
+
+$$
+CI_{Wilson} = [\hat{p}_W - d,\; \hat{p}_W + d]
+$$ In practice, the function `binom::binom.confint(method = "wilson")` is applied.
+
+-   For **PPV** and **NPV**, confidence intervals are derived by propagation of uncertainty, taking the extreme values of Se and Sp within their confidence bounds:
+
+$$
+CI_{PPV} = \left[ \min_{Se,Sp} f(Se,Sp), \; \max_{Se,Sp} f(Se,Sp) \right]
+$$
+
+where $f(Se,Sp)$ is the PPV function given above (analogous for NPV).
+
+-   For **Likelihood Ratios (LR⁺, LR⁻)**, confidence intervals are computed on the log scale:
+
+$$
+CI_{LR} = \exp \left( \ln(LR) \pm 1.96 \times SE(\ln(LR)) \right)
+$$
+
+The **standard errors** for **LR+** et **LR-** used in the package are estimated from TP, FP, TN, FN counts according to the delta method:
+
+$$
+\operatorname{SE}\!\left[\ln\!\left(\mathrm{LR}^+\right)\right] 
+= \sqrt{\frac{1-\mathrm{Se}}{TP} + \frac{\mathrm{Sp}}{FP}},
+$$
+
+$$
+\operatorname{SE}\!\left[\ln\!\left(\mathrm{LR}^-\right)\right] 
+= \sqrt{\frac{\mathrm{Se}}{FN} + \frac{1-\mathrm{Sp}}{TN}}.
+$$
+
+-   For **Youden’s index**, the standard error is approximated as (based on binomial variance of Se and Sp and summing variances of independent proportions):
+
+$$
+SE(J) = \sqrt{\frac{Se(1-Se)}{TP+FN} + \frac{Sp(1-Sp)}{TN+FP}}
+$$
+
+and the 95% CI is:
+
+$$
+CI_J = J \pm 1.96 \times SE(J)
+$$
+
+## Citation {#citation}
+
+If you use 'EvalTest' in your research, please cite it as running the following script on Rconsole:
+
+```{r citation, eval = FALSE}
+citation("EvalTest")
+```
+
+Or just cite as (after the package is published there):
+
+Ayad N (2025). EvalTest: A Shiny App to Evaluate Diagnostic Tests Performance. R package version 1.0.2. CRAN. Available from: <https://CRAN.R-project.org/package=EvalTest>
+
+## References {#references}
+
+-   Habibzadeh, F. (2025). Diagnostic tests performance indices: An overview. Biochemia Medica, 35(1), 010101. <https://doi.org/10.11613/BM.2025.010101>
+-   Brown, L. D., Cai, T. T., & DasGupta, A. (2001). Interval estimation for a binomial proportion (with discussion). Statistical Science, 16, 101–133. <https://doi.org/10.1214/ss/1009213286>
+-   Liu, X. (2012). Classification accuracy and cut point selection. Statistics in Medicine, 31(23), 2676–2686. <https://doi.org/10.1002/sim.4509>
+-   Simel, D. L., Samsa, G. P., & Matchar, D. B. (1991). Likelihood ratios with confidence: sample size estimation for diagnostic test studies. Journal of clinical epidemiology, 44(8), 763–770. [https://doi.org/10.1016/0895-4356(91)90128-v](https://doi.org/10.1016/0895-4356(91)90128-v){.uri}
