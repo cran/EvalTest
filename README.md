@@ -6,7 +6,7 @@
 
 ## Description
 
-The 'EvalTest' package provides a 'Shiny' application for evaluating diagnostic test performance using data from laboratory or diagnostic research. It supports both binary and continuous test variables. It allows users to compute and visualize:
+The 'EvalTest' package provides a function to compute diagnostic performance indicators and provides a 'Shiny' application for evaluating diagnostic test performance using data from laboratory or diagnostic research. It supports both binary and continuous test variables. It allows users to compute and visualize:
 
 -   **Confusion matrix**: for binary test results (or threshold categorized quantitative test results) and disease status.
 
@@ -18,17 +18,36 @@ The 'EvalTest' package provides a 'Shiny' application for evaluating diagnostic 
 
 ## Installation
 
-You can install the development version of 'EvalTest' from GitHub like so:
+You can install the development version of 'EvalTest' from GitHub like so (if you have `devtools` package installed):
 
 ``` r
 devtools::install_github("NassimAyad87/EvalTest", dependencies = TRUE)
 ```
 
-Or from CRAN (after the package is published there):
+Or from CRAN:
 
 ``` r
 install.packages(EvalTest)
 ```
+
+## Compute diagnostic test indicators
+
+The function `compute_indicators()` computes sensitivity, specificity, predictive values, likelihood ratios, accuracy, and Youden index with their confidence intervals based on a 2x2 table of diagnostic test results:
+
+``` r
+compute_indicators(tp, fp, fn, tn, prev, conf = 0.95)
+```
+
+Where:
+
+-   `tp`: True positives
+-   `fp`: False positives
+-   `fn`: False negatives
+-   `tn`: True negatives
+-   `prev`: Prevalence of the disease in the population (numeric between 0 and 1)
+-   `conf`: Confidence level (default 0.95)
+
+It returns a list with all diagnostic indicators and confidence intervals.
 
 ## Using the Application
 
@@ -36,7 +55,7 @@ Launch the Shiny application using:
 
 ``` r
 library(EvalTest)
-run_app()
+EvalTest::run_app()
 ```
 
 This will open the application in your default web browser (or RStudio viewer pane) and follow these steps:
@@ -67,6 +86,6 @@ To cite the 'EvalTest' package in publications, use this script:
 citation("EvalTest")
 ```
 
-Or just cite as (after the package is published there):
+Or just cite:
 
--   Ayad N (2025). EvalTest: A Shiny App to Evaluate Diagnostic Tests Performance. R package version 1.0.2. CRAN. Available from: <https://CRAN.R-project.org/package=EvalTest>
+-   Ayad N (2025). EvalTest: A Shiny App to evaluate diagnostic tests performance. R package version 1.0.3.<https://CRAN.R-project.org/package=EvalTest>

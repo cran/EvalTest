@@ -1,6 +1,6 @@
 ---
 title: "Introduction to EvalTest"
-author: "Author: Dr. Nassim Ayad"
+author: "Nassim Ayad"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -18,42 +18,64 @@ knitr::opts_chunk$set(
 
 ## Table of Contents
 
--   [Introduction to EvalTest](#introduction-to-evaltest)
+-   [Introduction](#introduction)
 -   [Installation](#installation)
+-   [Compute diagnostic test indicators](#compute-diagnostic-test-indicators)
 -   [Launching the Application](#launching-the-application)
 -   [Using the Application](#using-the-application)
 -   [Statistical formulas](#statistical-formulas)
 -   [Citation](#citation)
 -   [References](#references)
 
-## Introduction to EvalTest {#introduction-to-evaltest}
+## Introduction {#introduction}
 
 The 'EvalTest' package provides a 'Shiny' application for evaluating diagnostic test performance using data from laboratory or diagnostic research. It supports both binary and continuous test variables. It allows users to compute key performance indicators with their confidence interval and visualize Receiver Operating Characteristic (ROC) curves, determine optimal cut-off thresholds, display confusion matrix, and export publication-ready plot. It aims to facilitate the application of statistical methods in diagnostic test evaluation by healthcare professionals.
 
 ## Installation {#installation}
 
-You can install the development version of 'EvalTest' from GitHub like so:
+You can install the development version of 'EvalTest' from GitHub like so (if you don't have 'devtools' package installed, you can install it first using `install.packages("devtools")`):
 
 ```{r install_github, eval = FALSE}
 devtools::install_github("NassimAyad87/EvalTest", dependencies = TRUE)
 ```
 
-Or from CRAN (after the package is published there):
+Or from CRAN:
 
 ```{r setup, eval = FALSE}
 install.packages("EvalTest", dependencies = TRUE)
 ```
 
-## Launching the Application {#launching-the-application}
+## Compute diagnostic test indicators {#compute-diagnostic-test-indicators}
 
-After installing the package, you can launch the application following these steps:
+After installing the package, you can call it:
 
 ```{r library_call, eval = FALSE}
 library(EvalTest)
 ```
 
+The function `compute_indicators()` computes sensitivity, specificity, predictive values, likelihood ratios, accuracy, and Youden index with confidence intervals based on a 2x2 table of diagnostic test results.
+
+```{r function_run, eval = FALSE}
+compute_indicators(tp, fp, fn, tn, prev, conf = 0.95)
+```
+
+Where:
+
+-   `tp`: True positives
+-   `fp`: False positives
+-   `fn`: False negatives
+-   `tn`: True negatives
+-   `prev`: Prevalence of the disease in the population (numeric between 0 and 1)
+-   `conf`: Confidence level (default 0.95)
+
+It returns a list with all diagnostic indicators and confidence intervals.
+
+## Launching the Application {#launching-the-application}
+
+You can launch the application following these steps:
+
 ```{r launch, eval = FALSE}
-run_app() 
+EvalTest::run_app() 
 ```
 
 This will open the 'Shiny' application in your default web or your RStudio viewer.
@@ -257,7 +279,7 @@ citation("EvalTest")
 
 Or just cite as (after the package is published there):
 
-Ayad N (2025). EvalTest: A Shiny App to Evaluate Diagnostic Tests Performance. R package version 1.0.2. CRAN. Available from: <https://CRAN.R-project.org/package=EvalTest>
+Ayad N (2025). EvalTest: A Shiny App to evaluate diagnostic tests performance. R package version 1.0.3. <https://CRAN.R-project.org/package=EvalTest>
 
 ## References {#references}
 

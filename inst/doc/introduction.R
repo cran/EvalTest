@@ -13,8 +13,11 @@ knitr::opts_chunk$set(
 ## ----library_call, eval = FALSE-----------------------------------------------
 # library(EvalTest)
 
+## ----function_run, eval = FALSE-----------------------------------------------
+# compute_indicators(tp, fp, fn, tn, prev, conf = 0.95)
+
 ## ----launch, eval = FALSE-----------------------------------------------------
-# run_app()
+# EvalTest::run_app()
 
 ## ----display_app, eval = TRUE, echo=FALSE, out.width= "80%"-------------------
 knitr::include_graphics("img/screenshot2.png")

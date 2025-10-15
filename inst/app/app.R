@@ -31,7 +31,7 @@ ui <- dashboardPage(
                                    "Quantitative" = "quant"),
                        selected = "qual"),
           selectInput("var_test", "Test variable", choices = NULL),
-          selectInput("var_ref", "Reference variable (binary 1/0 as 1 for for disease: yes)", choices = NULL),
+          selectInput("var_ref", "Reference variable (binary 1/0 as 1 for disease: yes)", choices = NULL),
           numericInput("prev", "Disease prevalence (in the population)", value = 0.1, min = 0, max = 1, step = 0.01),
           actionButton("analyser", "Run analysis", icon = icon("play"), class = "btn-warning"),
           br()
@@ -61,7 +61,7 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   df <- reactiveVal()
-  
+
   observeEvent(input$file, {
     req(input$file)
     data <- read_excel(input$file$datapath)
@@ -69,14 +69,14 @@ server <- function(input, output, session) {
     updateSelectInput(session, "var_test", choices = names(data))
     updateSelectInput(session, "var_ref", choices = names(data))
   })
-  
+
   results <- eventReactive(input$analyser, {
     req(df(), input$var_test, input$var_ref)
     data <- df()
-    
+
     ref  <- data[[input$var_ref]]
     test <- data[[input$var_test]]
-    
+
     if (!all(ref %in% c(0, 1), na.rm = TRUE)) {
       showModal(modalDialog(
         title = "Error",
@@ -101,11 +101,11 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
-    
+
     cc <- stats::complete.cases(ref, test)
     ref_cc  <- ref[cc]
     test_cc <- test[cc]
-    
+
     if (length(unique(ref_cc)) < 2) {
       showModal(modalDialog(
         title = "Error",
@@ -114,7 +114,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
-    
+
     roc_obj <- pROC::roc(response = ref_cc, predictor = test_cc, quiet = TRUE, direction = "auto")
     best <- pROC::coords(
       roc_obj,
@@ -126,7 +126,7 @@ server <- function(input, output, session) {
     best_cutoff <- as.numeric(best$threshold[1])
     Se <- as.numeric(best$sensitivity[1])
     Sp <- as.numeric(best$specificity[1])
-    
+
     best_cutoff <- as.numeric(best$threshold[1])
     Se <- as.numeric(best$sensitivity[1])
     Sp <- as.numeric(best$specificity[1])
@@ -134,7 +134,7 @@ server <- function(input, output, session) {
     FP <- as.integer(best$fp[1])
     TN <- as.integer(best$tn[1])
     FN <- as.integer(best$fn[1])
-    
+
     Prev <- input$prev
     denom_ppv <- (Se * Prev) + ((1 - Sp) * (1 - Prev))
     denom_npv <- ((1 - Se) * Prev) + (Sp * (1 - Prev))
@@ -145,18 +145,18 @@ server <- function(input, output, session) {
     denom_acc <- TP + FP + FN + TN
     Acc <- if (denom_acc == 0) NA_real_ else (TP + TN) / denom_acc
     Youden <- Se + Sp - 1
-    
+
     binom_ci <- function(x, n, conf = 0.95) {
       if (n == 0) return(c(NA, NA))
       ci <- binom.confint(x, n, conf.level = conf, methods = "wilson")
       c(ci$lower, ci$upper)
     }
-    
+
     ci_se <- binom_ci(TP, TP + FN)
     ci_sp <- binom_ci(TN, TN + FP)
-    
+
     ci_acc <- binom_ci(TP + TN, denom_acc)
-    
+
     ppv_fun <- function(Se, Sp, Prev) {
       denom <- (Se * Prev) + ((1 - Sp) * (1 - Prev))
       if (is.na(denom) || denom == 0) return(NA_real_)
@@ -167,24 +167,24 @@ server <- function(input, output, session) {
       if (is.na(denom) || denom == 0) return(NA_real_)
       (Sp * (1 - Prev)) / denom
     }
-    
+
     se_bounds <- ci_se[1:2]
     sp_bounds <- ci_sp[1:2]
-    ppv_vals <- outer(se_bounds, sp_bounds, 
+    ppv_vals <- outer(se_bounds, sp_bounds,
                       Vectorize(function(se, sp) ppv_fun(se, sp, Prev)))
-    npv_vals <- outer(se_bounds, sp_bounds, 
+    npv_vals <- outer(se_bounds, sp_bounds,
                       Vectorize(function(se, sp) npv_fun(se, sp, Prev)))
     ci_ppv <- range(ppv_vals, na.rm = TRUE)
     ci_npv <- range(npv_vals, na.rm = TRUE)
-    
+
     se_lr_p <- if (!is.na(LRp) && TP > 0 && FP > 0) sqrt((1- Se)/(TP) + Sp/(FP)) else NA_real_
     se_lr_n <- if (!is.na(LRn) && FN > 0 && TN > 0) sqrt(Se/(FN) + (1-Sp)/(TN)) else NA_real_
     ci_lr_p <- if (!is.na(LRp) && !is.na(se_lr_p)) exp(log(LRp) + c(-1,1) * 1.96 * se_lr_p) else c(NA,NA)
     ci_lr_n <- if (!is.na(LRn) && !is.na(se_lr_n)) exp(log(LRn) + c(-1,1) * 1.96 * se_lr_n) else c(NA,NA)
-    
+
     se_youden <- if ((TP + FN) > 0 && (TN + FP) > 0) sqrt((Se*(1-Se))/(TP+FN) + (Sp*(1-Sp))/(TN+FP)) else NA_real_
     ci_youden <- if (!is.na(se_youden)) Youden + c(-1,1)*1.96*se_youden else c(NA,NA)
-    
+
     f3 <- function(x) formatC(x, format = "f", digits = 3)
     indicateurs <- data.frame(
       Indicator = c("Sensitivity (Se)", "Specificity (Sp)",
@@ -192,7 +192,7 @@ server <- function(input, output, session) {
                     "Positive likelihood ratio (LR+)", "Negative likelihood ratio (LR-)",
                     "Accuracy", "Youden index"),
       Estimate = f3(c(Se, Sp, PPV, NPV, LRp, LRn, Acc, Youden)),
-      `95% CI` = paste0("[", 
+      `95% CI` = paste0("[",
                         f3(c(ci_se[1], ci_sp[1], ci_ppv[1], ci_npv[1],
                                 ci_lr_p[1], ci_lr_n[1], ci_acc[1], ci_youden[1])),
                         " – ",
@@ -212,12 +212,12 @@ server <- function(input, output, session) {
       roc = roc_obj
     )
   })
-  
+
   output$contingence <- renderTable({
     req(results())
     results()$table
   }, rownames = TRUE)
-  
+
   output$valeurs_brutes <- renderTable({
     req(results())
     data.frame(
@@ -225,12 +225,12 @@ server <- function(input, output, session) {
       Count = c(results()$TP, results()$FP, results()$FN, results()$TN)
     )
   }, rownames = FALSE)
-  
+
   output$res_table <- renderDT({
     req(results())
     datatable(results()$indicateurs, options = list(dom = 't', paging = FALSE), rownames = FALSE)
   })
-  
+
   output$roc_plot <- renderPlot({
     req(results())
     roc_obj <- results()$roc
@@ -247,7 +247,7 @@ server <- function(input, output, session) {
       ci.lower = ci_obj[, 1],
       ci.upper = ci_obj[, 3]
     )
-    
+
     ggroc(roc_obj, color = "blue", size = 1.2) +
       geom_ribbon(data = ci_df,
                   aes(x = specificities, ymin = ci.lower, ymax = ci.upper),
@@ -274,7 +274,7 @@ server <- function(input, output, session) {
       ggtitle("ROC curve") +
       theme_classic2(base_size = 16)
   })
-  
+
   output$download_report <- downloadHandler(
     filename = function() {
       paste0("Diagnostic tests evaluation_confusion matrix_", Sys.Date(), ".xlsx")
@@ -291,7 +291,7 @@ server <- function(input, output, session) {
       saveWorkbook(wb, file)
     }
   )
-  
+
   output$download_indicators <- downloadHandler(
     filename = function() {
       paste0("Diagnostic tests evaluation_Indicators_", Sys.Date(), ".xlsx")
@@ -303,7 +303,7 @@ server <- function(input, output, session) {
       saveWorkbook(wb, file)
     }
   )
-  
+
   output$download_plot <- downloadHandler(
     filename = function() {
       paste0("ROC_curve_", Sys.Date(), ".png")
