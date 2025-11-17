@@ -1,6 +1,6 @@
 Package: EvalTest
 Title: A 'shiny' App to Evaluate Diagnostic Tests Performance
-Version: 1.0.3
+Version: 1.0.5
 Authors@R: 
     person(given = "Nassim", family = "AYAD", email = "nassim.ayad.ph@gmail.com", 
     role = c("aut", "cre"),
@@ -19,9 +19,9 @@ Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2025-10-15 19:06:08 UTC; maison
+Packaged: 2025-10-17 10:51:29 UTC; maison
 Author: Nassim AYAD [aut, cre] (ORCID: <https://orcid.org/0000-0002-1809-0935>,
     affiliation: Laboratory of Modeling and Biostatistics, Pasteur
     Institute of Algeria)
 Repository: CRAN
-Date/Publication: 2025-10-15 19:20:19 UTC
+Date/Publication: 2025-11-17 11:30:02 UTC

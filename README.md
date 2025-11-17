@@ -27,10 +27,16 @@ devtools::install_github("NassimAyad87/EvalTest", dependencies = TRUE)
 Or from CRAN:
 
 ``` r
-install.packages(EvalTest)
+install.packages("EvalTest")
 ```
 
 ## Compute diagnostic test indicators
+
+Load the package:
+
+``` r
+library(EvalTest)
+```
 
 The function `compute_indicators()` computes sensitivity, specificity, predictive values, likelihood ratios, accuracy, and Youden index with their confidence intervals based on a 2x2 table of diagnostic test results:
 
@@ -54,7 +60,6 @@ It returns a list with all diagnostic indicators and confidence intervals.
 Launch the Shiny application using:
 
 ``` r
-library(EvalTest)
 EvalTest::run_app()
 ```
 
@@ -88,4 +93,4 @@ citation("EvalTest")
 
 Or just cite:
 
--   Ayad N (2025). EvalTest: A Shiny App to evaluate diagnostic tests performance. R package version 1.0.3.<https://CRAN.R-project.org/package=EvalTest>
+-   Ayad N (2025). EvalTest: A Shiny App to evaluate diagnostic tests performance. R package version 1.0.5.<https://CRAN.R-project.org/package=EvalTest>

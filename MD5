@@ -1,15 +1,15 @@
-e0718ea516fb152c5c8242a77c19333b *DESCRIPTION
+ed900c213cde631a14e1be30cbeda578 *DESCRIPTION
 8500e506e62c4be55ab8758dc86351df *LICENSE
 503b2f66c9c400d493b5553e53edee3e *NAMESPACE
-007736fe23fd3e2abb4f782b6322cb1b *NEWS.md
+56ada964649b2b6f09c68b32671a0d99 *NEWS.md
 505893984b4309dd0fd849ecfdbfe14e *R/compute_indicators.R
 b96eedda1b1a9835a2ac238d1d61b1c6 *R/run_app.R
-2f5894db9bc9bd060ec4c9ba11131e9e *README.md
+bd2ba7c95042bf23164b1d261bf7dd28 *README.md
 5a56a93099169f91fc7a333f3309c1c0 *build/vignette.rds
-9c84a99e4f992995984f0cf6e8fa6c6e *inst/app/app.R
+184d497d8f355f35a5de0ef5015da459 *inst/app/app.R
 32bc8966770fecd29ce4cee8baf736bf *inst/doc/introduction.R
-a18d9b39a3f8c900f7a855be7e7abb14 *inst/doc/introduction.Rmd
-576f95a945fc33a688c47d53996029b1 *inst/doc/introduction.html
+d0b50d85f6209c00be521d38275f69be *inst/doc/introduction.Rmd
+04726e17251ef5a2895a72f5cbd3257a *inst/doc/introduction.html
 29193b47c6350652f88def8114a7ad02 *man/compute_indicators.Rd
 16747edbe795061b01d7f315c88d06e2 *man/run_app.Rd
 56d26986a4ad5ded10b340036b01b083 *tests/testthat.R
@@ -20,4 +20,4 @@ e91111ee87594316f9a9f0a0ef4b880f *vignettes/img/screenshot2.png
 cef8d6a5461ddff84f73509576960597 *vignettes/img/screenshot4.png
 2563814b8068a25f5b3dab6f4dc80589 *vignettes/img/screenshot5.png
 c18de0e3ad535f71f3a19612a9d56bd9 *vignettes/img/screenshot6.png
-a18d9b39a3f8c900f7a855be7e7abb14 *vignettes/introduction.Rmd
+d0b50d85f6209c00be521d38275f69be *vignettes/introduction.Rmd

@@ -21,8 +21,8 @@ knitr::opts_chunk$set(
 -   [Introduction](#introduction)
 -   [Installation](#installation)
 -   [Compute diagnostic test indicators](#compute-diagnostic-test-indicators)
--   [Launching the Application](#launching-the-application)
--   [Using the Application](#using-the-application)
+-   [Launching the application](#launching-the-application)
+-   [Using the application](#using-the-application)
 -   [Statistical formulas](#statistical-formulas)
 -   [Citation](#citation)
 -   [References](#references)
@@ -47,7 +47,7 @@ install.packages("EvalTest", dependencies = TRUE)
 
 ## Compute diagnostic test indicators {#compute-diagnostic-test-indicators}
 
-After installing the package, you can call it:
+After installing the package, you can load it:
 
 ```{r library_call, eval = FALSE}
 library(EvalTest)
@@ -70,7 +70,7 @@ Where:
 
 It returns a list with all diagnostic indicators and confidence intervals.
 
-## Launching the Application {#launching-the-application}
+## Launching the application {#launching-the-application}
 
 You can launch the application following these steps:
 
@@ -78,13 +78,13 @@ You can launch the application following these steps:
 EvalTest::run_app() 
 ```
 
-This will open the 'Shiny' application in your default web or your RStudio viewer.
+This will open the 'Shiny' application in your default web browser or your RStudio viewer.
 
 ```{r display_app, eval = TRUE, echo=FALSE, out.width= "80%"}
 knitr::include_graphics("img/screenshot2.png")
 ```
 
-## Using the Application {#using-the-application}
+## Using the application {#using-the-application}
 
 The application is designed to be user-friendly and intuitive. Here are the steps to use it:
 
@@ -132,7 +132,7 @@ knitr::include_graphics("img/screenshot6.png")
 
 The main diagnostic performance indicators computed by **EvalTest** are defined as follows:
 
-### Determining the Optimal Cut-off Threshold (Top-left Method)
+### Determining the optimal Cut-off Threshold (Top-left Method)
 
 The **top-left method** is a common approach to select the optimal cut-off threshold from the ROC curve.\
 It identifies the point on the curve that is **closest to the ideal point (0,1)**, which corresponds to perfect sensitivity (100%) and specificity (100%).
@@ -168,19 +168,19 @@ $$
 Sp = \frac{TN}{TN + FP}
 $$
 
--   **Positive Predictive Value (PPV):**
+-   **Positive predictive value (PPV):**
 
 $$
 PPV = \frac{Se \times Prev}{(Se \times Prev) + (1 - Sp)(1 - Prev)}
 $$
 
--   **Negative Predictive Value (NPV):**
+-   **Negative predictive value (NPV):**
 
 $$
 NPV = \frac{Sp \times (1 - Prev)}{(1 - Se) \times Prev + Sp \times (1 - Prev)}
 $$
 
--   **Likelihood Ratios:**
+-   **Likelihood ratios:**
 
 $$
 LR^+ = \frac{Se}{1 - Sp}, \qquad
@@ -193,7 +193,7 @@ $$
 Acc = \frac{TP + TN}{TP + FP + FN + TN}
 $$
 
--   **Youden’s Index (J):**
+-   **Youden’s index (J):**
 
 $$
 J = Se + Sp - 1
@@ -201,7 +201,7 @@ $$
 
 ------------------------------------------------------------------------
 
-### Confidence Intervals
+### Confidence intervals
 
 -   For **proportions** (Se, Sp, Acc), **Wilson binomial confidence intervals** are used:
 
@@ -239,7 +239,7 @@ $$
 
 where $f(Se,Sp)$ is the PPV function given above (analogous for NPV).
 
--   For **Likelihood Ratios (LR⁺, LR⁻)**, confidence intervals are computed on the log scale:
+-   For **Likelihood ratios (LR⁺, LR⁻)**, confidence intervals are computed on the log scale:
 
 $$
 CI_{LR} = \exp \left( \ln(LR) \pm 1.96 \times SE(\ln(LR)) \right)
@@ -279,11 +279,11 @@ citation("EvalTest")
 
 Or just cite as (after the package is published there):
 
-Ayad N (2025). EvalTest: A Shiny App to evaluate diagnostic tests performance. R package version 1.0.3. <https://CRAN.R-project.org/package=EvalTest>
+Ayad N (2025). EvalTest: A Shiny App to evaluate diagnostic tests performance. R package version 1.0.5. <https://CRAN.R-project.org/package=EvalTest>
 
 ## References {#references}
 
--   Habibzadeh, F. (2025). Diagnostic tests performance indices: An overview. Biochemia Medica, 35(1), 010101. <https://doi.org/10.11613/BM.2025.010101>
 -   Brown, L. D., Cai, T. T., & DasGupta, A. (2001). Interval estimation for a binomial proportion (with discussion). Statistical Science, 16, 101–133. <https://doi.org/10.1214/ss/1009213286>
+-   Habibzadeh, F. (2025). Diagnostic tests performance indices: An overview. Biochemia Medica, 35(1), 010101. <https://doi.org/10.11613/BM.2025.010101>
 -   Liu, X. (2012). Classification accuracy and cut point selection. Statistics in Medicine, 31(23), 2676–2686. <https://doi.org/10.1002/sim.4509>
 -   Simel, D. L., Samsa, G. P., & Matchar, D. B. (1991). Likelihood ratios with confidence: sample size estimation for diagnostic test studies. Journal of clinical epidemiology, 44(8), 763–770. [https://doi.org/10.1016/0895-4356(91)90128-v](https://doi.org/10.1016/0895-4356(91)90128-v){.uri}

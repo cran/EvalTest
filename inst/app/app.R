@@ -123,9 +123,6 @@ server <- function(input, output, session) {
       ret = c("threshold", "sensitivity", "specificity", "tp", "fp", "tn", "fn"),
       transpose = FALSE
     )
-    best_cutoff <- as.numeric(best$threshold[1])
-    Se <- as.numeric(best$sensitivity[1])
-    Sp <- as.numeric(best$specificity[1])
 
     best_cutoff <- as.numeric(best$threshold[1])
     Se <- as.numeric(best$sensitivity[1])
@@ -248,7 +245,7 @@ server <- function(input, output, session) {
       ci.upper = ci_obj[, 3]
     )
 
-    ggroc(roc_obj, color = "blue", size = 1.2) +
+    ggroc(roc_obj, color = "blue", linewidth = 1.2) +
       geom_ribbon(data = ci_df,
                   aes(x = specificities, ymin = ci.lower, ymax = ci.upper),
                   fill = "lightblue", alpha = 0.3, inherit.aes = FALSE) +
@@ -324,7 +321,7 @@ server <- function(input, output, session) {
         ci.lower = ci_obj[, 1],
         ci.upper = ci_obj[, 3]
       )
-      g <- ggroc(roc_obj, color = "blue", size = 1.2) +
+      g <- ggroc(roc_obj, color = "blue", linewidth = 1.2) +
         geom_ribbon(data = ci_df,
                     aes(x = specificities, ymin = ci.lower, ymax = ci.upper),
                     fill = "lightblue", alpha = 0.3, inherit.aes = FALSE) +
