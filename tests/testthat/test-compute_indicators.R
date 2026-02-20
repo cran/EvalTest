@@ -1,25 +1,25 @@
 test_that("compute_indicators works with simple example", {
-  res <- compute_indicators(tp = 50, fp = 10, fn = 5, tn = 100, prev = 0.1)
+  res <- compute_indicators(tp = 58, fp = 15, fn = 14, tn = 26, prev = 0.1, conf = 0.95)
 
-  # Sensitivity = 50 / (50+5) = 0.909...
-  expect_equal(round(res$Se, 2), 0.91)
+  # Sensitivity = 58 / (58+14) = 0.806...
+  expect_equal(round(res$Sensitivity_Se, 3), 0.806)
 
-  # Specificity = 100 / (100+10) = 0.909...
-  expect_equal(round(res$Sp, 2), 0.91)
+  # Specificity = 26 / (26+15) = 0.634...
+  expect_equal(round(res$Specificity_Sp, 3), 0.634)
 
-  # Accuracy = (50+100) / (50+10+5+100) = 150/165 ≈ 0.91
-  expect_equal(round(res$Acc, 2), 0.91)
+  # Accuracy = (58+26) / (58+15+14+26) = 0.743
+  expect_equal(round(res$Accuracy_Acc, 3), 0.743)
 
-  # Youden = Se + Sp - 1 ≈ 0.82
-  expect_equal(round(res$Youden, 2), 0.82)
+  # Youden = Se + Sp - 1 ≈ 0.440
+  expect_equal(round(res$Youden_index, 3), 0.440)
 
   # Check outputs are not NULL
-  expect_false(is.null(res$ci_Se))
-  expect_false(is.null(res$ci_Sp))
-  expect_false(is.null(res$ci_PPV))
-  expect_false(is.null(res$ci_NPV))
-  expect_false(is.null(res$ci_LRp))
-  expect_false(is.null(res$ci_LRn))
-  expect_false(is.null(res$ci_Acc))
-  expect_false(is.null(res$ci_Youden))
+  expect_false(is.null(res$CI_Se))
+  expect_false(is.null(res$CI_Sp))
+  expect_false(is.null(res$CI_PPV))
+  expect_false(is.null(res$CI_NPV))
+  expect_false(is.null(res$CI_LRp))
+  expect_false(is.null(res$CI_LRn))
+  expect_false(is.null(res$CI_Acc))
+  expect_false(is.null(res$CI_Youden))
 })

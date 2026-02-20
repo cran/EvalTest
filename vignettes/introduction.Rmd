@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 
 ## Introduction {#introduction}
 
-The 'EvalTest' package provides a 'Shiny' application for evaluating diagnostic test performance using data from laboratory or diagnostic research. It supports both binary and continuous test variables. It allows users to compute key performance indicators with their confidence interval and visualize Receiver Operating Characteristic (ROC) curves, determine optimal cut-off thresholds, display confusion matrix, and export publication-ready plot. It aims to facilitate the application of statistical methods in diagnostic test evaluation by healthcare professionals.
+The 'EvalTest' package provides a function to compute performance indicators with their confidence intervals, and a 'Shiny' application for evaluating diagnostic test performance using data from laboratory or diagnostic research. It supports both binary and continuous test variables. It allows users to compute key performance indicators with their confidence interval and visualize Receiver Operating Characteristic (ROC) curves, determine optimal cut-off thresholds, display confusion matrix, and export publication-ready plot. It aims to facilitate the application of statistical methods in diagnostic test evaluation by healthcare professionals.
 
 ## Installation {#installation}
 
@@ -231,7 +231,7 @@ $$
 CI_{Wilson} = [\hat{p}_W - d,\; \hat{p}_W + d]
 $$ In practice, the function `binom::binom.confint(method = "wilson")` is applied.
 
--   For **PPV** and **NPV**, confidence intervals are derived by propagation of uncertainty, taking the extreme values of Se and Sp within their confidence bounds:
+-   For **predictive values PPV and NPV** which are monotonic functions of sensitivity (Se) and specificity (Sp). Their confidence intervals were therefore obtained by propagation of uncertainty using the confidence bounds of Se and Sp. Because the variability of PPV and NPV is driven by the uncertainty in Se and Sp, the lower and upper limits of PPV and NPV were determined by evaluating all combinations of the confidence interval limits of Se and Sp and retaining the minimum and maximum resulting values. Assuming independence between the samples used to estimate Se and Sp (diseased and non-diseased two groups), the joint coverage probability corresponds to the product of their marginal coverage probabilities. Consequently, to obtain nominal 95% confidence intervals for PPV and NPV, Se and Sp were computed at the 97.5% confidence level instead of using previous computed ones 95% (since 0.975² ≈ 0.95). The confidence intervals for PPV and NPV were therefore calculated as follows:
 
 $$
 CI_{PPV} = \left[ \min_{Se,Sp} f(Se,Sp), \; \max_{Se,Sp} f(Se,Sp) \right]
@@ -277,13 +277,18 @@ If you use 'EvalTest' in your research, please cite it as running the following 
 citation("EvalTest")
 ```
 
-Or just cite as (after the package is published there):
+Or just cite as:
 
-Ayad N (2025). EvalTest: A Shiny App to evaluate diagnostic tests performance. R package version 1.0.5. <https://CRAN.R-project.org/package=EvalTest>
+Ayad N (2026). EvalTest: Tools for Evaluating Diagnostic Test Performance. R package version 1.0.6. <https://CRAN.R-project.org/package=EvalTest>
 
 ## References {#references}
 
--   Brown, L. D., Cai, T. T., & DasGupta, A. (2001). Interval estimation for a binomial proportion (with discussion). Statistical Science, 16, 101–133. <https://doi.org/10.1214/ss/1009213286>
--   Habibzadeh, F. (2025). Diagnostic tests performance indices: An overview. Biochemia Medica, 35(1), 010101. <https://doi.org/10.11613/BM.2025.010101>
--   Liu, X. (2012). Classification accuracy and cut point selection. Statistics in Medicine, 31(23), 2676–2686. <https://doi.org/10.1002/sim.4509>
--   Simel, D. L., Samsa, G. P., & Matchar, D. B. (1991). Likelihood ratios with confidence: sample size estimation for diagnostic test studies. Journal of clinical epidemiology, 44(8), 763–770. [https://doi.org/10.1016/0895-4356(91)90128-v](https://doi.org/10.1016/0895-4356(91)90128-v){.uri}
+- Baratloo A, Hosseini M, Negida A, El Ashal G. Part 1: Simple definition and calculation of accuracy, sensitivity and specificity. Emerg (Tehran). 2015;3:48-49.
+- Brown LD, Cai TT, DasGupta A. Interval Estimation for a Binomial Proportion. Statist. Sci. 2001;16:101–133. 
+- Deeks JJ, Altman DG. Diagnostic tests 4: likelihood ratios BMJ 2004;329:168 
+- Habibzadeh F. Diagnostic tests performance indices: an overview. Biochem Med (Zagreb). 2025;35:01010. 
+- Hassanzad M, Hajian-Tilaki K. Methods of determining optimal cut-point of diagnostic biomarkers with application of clinical data in ROC analysis: an update review. BMC Med Res Methodol. 2024;24:84.
+- Robin X, Turck N, Hainard A, Tiberti N, Lisacek F, Sanchez JC, et al. pROC: an open-source package for R and S+ to analyze and compare ROC curves. BMC Bioinformatics. 2011;12:77. 
+- Simel DL, Samsa GP, Matchar DB. Likelihood ratios with confidence: sample size estimation for diagnostic test studies. J Clin Epidemiol. 1991;44:763–770. 
+- Ying GS, Maguire MG, Glynn RJ, Rosner B. Calculating Sensitivity, Specificity, and Predictive Values for Correlated Eye Data. Invest Ophthalmol Vis Sci. 2020;61:29.
+- Youden WJ. Index for rating diagnostic tests. Cancer. 1950;3:32-35. 

@@ -1,8 +1,8 @@
 #' Compute diagnostic test indicators
 #'
 #' This function computes sensitivity, specificity, predictive values,
-#' likelihood ratios, accuracy, and Youden index with confidence intervals
-#' based on a 2x2 table of diagnostic test results.
+#' likelihood ratios, accuracy, and Youden index with their confidence intervals
+#' (with desired confidence level), based on a 2x2 table of diagnostic test results.
 #'
 #' @param tp True positives
 #' @param fp False positives
@@ -16,7 +16,7 @@
 #' @importFrom binom binom.confint
 #'
 #' @examples
-#' compute_indicators(50, 10, 5, 100, prev = 0.1)
+#' compute_indicators(58, 15, 14, 26, prev = 0.1, conf = 0.95)
 compute_indicators <- function(tp, fp, fn, tn, prev, conf = 0.95) {
   stopifnot(tp >= 0, fp >= 0, fn >= 0, tn >= 0)
 
@@ -41,7 +41,7 @@ compute_indicators <- function(tp, fp, fn, tn, prev, conf = 0.95) {
   # Youden index
   Youden <- Se + Sp - 1
 
-  # Binomial confidence intervals
+  # Binomial confidence intervals function for Se, Sp, and Accuracy
   ci_binom <- function(x, n, conf = 0.95) {
     if (n == 0) return(c(NA, NA))
     ci <- binom::binom.confint(x, n, conf.level = conf, methods = "wilson")
@@ -52,7 +52,7 @@ compute_indicators <- function(tp, fp, fn, tn, prev, conf = 0.95) {
   ci_sp <- ci_binom(tn, tn + fp, conf)
   ci_acc <- ci_binom(tp + tn, total, conf)
 
-  # CI for predictive values (approx by sensitivity/specificity bounds)
+  # CI for predictive values (approx by sensitivity/specificity IC97.5% bounds)
   ppv_fun <- function(Se, Sp, Prev) {
     denom <- (Se * Prev) + ((1 - Sp) * (1 - Prev))
     if (is.na(denom) || denom == 0) return(NA_real_)
@@ -64,8 +64,18 @@ compute_indicators <- function(tp, fp, fn, tn, prev, conf = 0.95) {
     (Sp * (1 - Prev)) / denom
   }
 
-  se_bounds <- ci_se[1:2]
-  sp_bounds <- ci_sp[1:2]
+  # Binomial confidence intervals for Se and Sp function used to compute CIs for PPV and NPV
+  ci_binom_2 <- function(x, n, conff = sqrt(conf)) {
+      if (n == 0) return(c(NA, NA))
+      ci <- binom.confint(x, n, conf.level = conff, methods = "wilson")
+      c(ci$lower, ci$upper)
+  }
+
+  ci_se_2 <- ci_binom_2(tp, tp + fn)
+  ci_sp_2 <- ci_binom_2(tn, tn + fp)
+
+  se_bounds <- ci_se_2[1:2]
+  sp_bounds <- ci_sp_2[1:2]
   ppv_vals <- outer(se_bounds, sp_bounds,
                     Vectorize(function(se, sp) ppv_fun(se, sp, prev)))
   npv_vals <- outer(se_bounds, sp_bounds,
@@ -86,13 +96,13 @@ compute_indicators <- function(tp, fp, fn, tn, prev, conf = 0.95) {
   ci_youden <- if (!is.na(se_youden)) Youden + c(-1, 1) * 1.96 * se_youden else c(NA, NA)
 
   list(
-    Se = Se, ci_Se = ci_se,
-    Sp = Sp, ci_Sp = ci_sp,
-    PPV = PPV, ci_PPV = ci_ppv,
-    NPV = NPV, ci_NPV = ci_npv,
-    LRp = LRp, ci_LRp = ci_lr_p,
-    LRn = LRn, ci_LRn = ci_lr_n,
-    Acc = Acc, ci_Acc = ci_acc,
-    Youden = Youden, ci_Youden = ci_youden
+    Sensitivity_Se = Se, CI_Se = ci_se,
+    Specificity_Sp = Sp, CI_Sp = ci_sp,
+    Positive_predictive_value_PPV = PPV, CI_PPV = ci_ppv,
+    Negative_predictive_value_NPV = NPV, CI_NPV = ci_npv,
+    Positive_likelihood_ratio_LRp = LRp, CI_LRp = ci_lr_p,
+    Negative_likelihood_ratio_LRn = LRn, CI_LRn = ci_lr_n,
+    Accuracy_Acc = Acc, CI_Acc = ci_acc,
+    Youden_index = Youden, CI_Youden = ci_youden
   )
 }

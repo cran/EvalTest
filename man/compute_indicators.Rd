@@ -24,9 +24,9 @@ A list with all diagnostic indicators and confidence intervals
 }
 \description{
 This function computes sensitivity, specificity, predictive values,
-likelihood ratios, accuracy, and Youden index with confidence intervals
-based on a 2x2 table of diagnostic test results.
+likelihood ratios, accuracy, and Youden index with their confidence intervals
+(with desired confidence level), based on a 2x2 table of diagnostic test results.
 }
 \examples{
-compute_indicators(50, 10, 5, 100, prev = 0.1)
+compute_indicators(58, 15, 14, 26, prev = 0.1, conf = 0.95)
 }

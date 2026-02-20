@@ -164,9 +164,15 @@ server <- function(input, output, session) {
       if (is.na(denom) || denom == 0) return(NA_real_)
       (Sp * (1 - Prev)) / denom
     }
-
-    se_bounds <- ci_se[1:2]
-    sp_bounds <- ci_sp[1:2]
+    binom_ci_0.975 <- function(x, n, conf = 0.975) {
+      if (n == 0) return(c(NA, NA))
+      ci <- binom.confint(x, n, conf.level = conf, methods = "wilson")
+      c(ci$lower, ci$upper)
+    }
+    ci_se_0.975 <- binom_ci_0.975(TP, TP + FN)
+    ci_sp_0.975 <- binom_ci_0.975(TN, TN + FP)
+    se_bounds <- ci_se_0.975[1:2]
+    sp_bounds <- ci_sp_0.975[1:2]
     ppv_vals <- outer(se_bounds, sp_bounds,
                       Vectorize(function(se, sp) ppv_fun(se, sp, Prev)))
     npv_vals <- outer(se_bounds, sp_bounds,
